@@ -1,7 +1,7 @@
 import pymysql
 import re
 
-conn = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="ts_adap")
+conn = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="test")
 cursor = conn.cursor()
 
 re_key_1 = re.compile(r'KEY `(\w+)` \((.*)\)')
