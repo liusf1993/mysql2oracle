@@ -11,10 +11,22 @@ def convert_index_ddl(table_name):
     cursor.execute("show create table %s" % table_name)
     rows = cursor.fetchall()
     ddl = rows[0][1]
+    i_ddl = ""
     for line in ddl.split("\n"):
-        match = re_key_1.match(line.strip())
-        if match:
-            print(match.group(1), match.group(2))
+        # 一般索引
+        key_match = re_key_1.match(line.strip())
+        ukey_match = re_key_2.match(line.strip())
+        if key_match:
+            i_ddl += "create index " + key_match.group(1) + " on " + table_name + "(" \
+                     + key_match.group(2).replace("`", "") + ");\n"
+            #print(i_ddl)
+        elif ukey_match:
+            i_ddl += "alter table " + table_name + " add CONSTRAINT " + ukey_match.group(1) \
+                     + " unique (" + ukey_match.group(2).replace("`", "") + ");\n"
+    f = open("%s.sql" % table_name, "w")
+    f.write(i_ddl)
+    f.close()
+
 
 def convert_table_ddl(table_name):
     cursor.execute("show full columns from %s" % table_name)
@@ -67,4 +79,5 @@ def convert_table_ddl(table_name):
     f.write(");")
     f.close()
 
-convert_index_ddl("T_Adap_DepositProduct")
+convert_table_ddl("test")
+convert_index_ddl("test")
